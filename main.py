@@ -3,6 +3,7 @@ import curses
 import time
 import os
 import sys
+import platform
 from re import search
 
 # Custom imports
@@ -61,7 +62,15 @@ def connect_odb_reader():
 
 def program(stdscr):
     if ENVIRONMENT == "simulator":
-        connection = obd.OBD("/dev/ttys001", baudrate=115200, )
+        os_type = platform.system()
+        match os_type:
+            case "Linux":
+                connection = obd.OBD("/dev/pts/0", baudrate=115200, )
+            case "Darwin":
+                connection = obd.OBD("/dev/ttys001", baudrate=115200, )
+            case _:
+                print("windows not supported")
+                exit(1)
     else:
         connection = connect_odb_reader()
 
